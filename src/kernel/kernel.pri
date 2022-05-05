@@ -4,6 +4,7 @@ HEADERS += \
     $$PWD/dguiapplicationhelper.h \
     $$PWD/dnativesettings.h \
     $$PWD/dpalette.h \
+    $$PWD/dpalettemanager.h \
     $$PWD/dplatformhandle.h \
     $$PWD/dplatformtheme.h \
     $$PWD/dregionmonitor.h \
@@ -15,6 +16,7 @@ SOURCES += \
     $$PWD/dguiapplicationhelper.cpp \
     $$PWD/dnativesettings.cpp \
     $$PWD/dpalette.cpp \
+    $$PWD/dpalettemanager.cpp \
     $$PWD/dplatformhandle.cpp \
     $$PWD/dplatformtheme.cpp \
     $$PWD/dregionmonitor.cpp \

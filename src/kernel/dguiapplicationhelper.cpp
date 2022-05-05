@@ -21,6 +21,7 @@
 #include "dguiapplicationhelper.h"
 #include "private/dguiapplicationhelper_p.h"
 #include "dplatformhandle.h"
+#include "dpalettemanager.h"
 #include <util/DFontManager>
 
 #include <QHash>
@@ -412,82 +413,6 @@ QColor DGuiApplicationHelper::blendColor(const QColor &substrate, const QColor &
     return QColor(r, g, b, c1.alpha());
 }
 
-static QColor light_qpalette[QPalette::NColorRoles] {
-    QColor("#414d68"),                  //WindowText
-    QColor("#e5e5e5"),                  //Button
-    QColor("#e6e6e6"),                  //Light
-    QColor("#e5e5e5"),                  //Midlight
-    QColor("#e3e3e3"),                  //Dark
-    QColor("#e4e4e4"),                  //Mid
-    QColor("#414d68"),                  //Text
-    Qt::black,                          //BrightText
-    QColor("#414d68"),                  //ButtonText
-    Qt::white,                          //Base
-    QColor("#f8f8f8"),                  //Window
-    QColor(0, 0, 0, 0.05 * 255),        //Shadow
-    QColor("#0081ff"),                  //Highlight
-    Qt::white,                          //HighlightedText
-    QColor("#0082fa"),                  //Link
-    QColor("#ad4579"),                  //LinkVisited
-    QColor(0, 0, 0, 0.03 * 255),        //AlternateBase
-    Qt::white,                          //NoRole
-    QColor(255, 255, 255, 0.8 * 255),   //ToolTipBase
-    Qt::black                           //ToolTipText
-};
-
-static QColor dark_qpalette[QPalette::NColorRoles] {
-    QColor("#c0c6d4"),                  //WindowText
-    QColor("#444444"),                  //Button
-    QColor("#484848"),                  //Light
-    QColor("#474747"),                  //Midlight
-    QColor("#414141"),                  //Dark
-    QColor("#434343"),                  //Mid
-    QColor("#c0c6d4"),                  //Text
-    Qt::white,                          //BrightText
-    QColor("#c0c6d4"),                  //ButtonText
-    QColor("#282828"),                  //Base
-    QColor("#252525"),                  //Window
-    QColor(0, 0, 0, 0.05 * 255),        //Shadow
-    QColor("#0081ff"),                  //Highlight
-    QColor("#F1F6FF"),                  //HighlightedText
-    QColor("#0082fa"),                  //Link
-    QColor("#ad4579"),                  //LinkVisited
-    QColor(0, 0, 0, 0.05 * 255),        //AlternateBase
-    Qt::black,                          //NoRole
-    QColor(45, 45, 45, 0.8 * 255),      //ToolTipBase
-    QColor("#c0c6d4")                   //ToolTipText
-};
-
-static QColor light_dpalette[DPalette::NColorTypes] {
-    QColor(),                       //NoType
-    QColor(0, 0, 0, 255 * 0.03),    //ItemBackground
-    QColor("#001A2E"),              //TextTitle
-    QColor("#526A7F"),              //TextTips
-    QColor("#FF5736"),              //TextWarning
-    Qt::white,                      //TextLively
-    QColor("#0081FF"),              //LightLively
-    QColor("#0081FF"),              //DarkLively
-    QColor(0, 0, 0, 0.05 * 255),    //FrameBorder
-    QColor(85, 85, 85, 0.4 * 255),  //PlaceholderText
-    QColor(0, 0, 0, 0.1 * 255),     //FrameShadowBorder
-    QColor(0, 0, 0, 0.1 * 255)      //ObviousBackground
-};
-
-static QColor dark_dpalette[DPalette::NColorTypes] {
-    QColor(),                           //NoType
-    QColor(255, 255, 255, 255 * 0.05),  //ItemBackground
-    QColor("#C0C6D4"),                  //TextTitle
-    QColor("#6D7C88"),                  //TextTips
-    QColor("#9a2f2f"),                  //TextWarning
-    Qt::white,                          //TextLively
-    QColor("#0059d2"),                  //LightLively
-    QColor("#0059d2"),                  //DarkLively
-    QColor(255, 255, 255, 0.1 * 255),   //FrameBorder
-    QColor(192, 198, 212, 0.4 * 255),   //PlaceholderText
-    QColor(0, 0, 0, 0.8 * 255),         //FrameShadowBorder
-    QColor(255, 255, 255, 0.1 * 255)    //ObviousBackground
-};
-
 /*!
   \brief 根据主题获取标准调色板.
 
@@ -535,8 +460,8 @@ DPalette DGuiApplicationHelper::standardPalette(DGuiApplicationHelper::ColorType
         else
             dark_palette = pa;
 
-        qcolor_list = dark_qpalette;
-        dcolor_list = dark_dpalette;
+        qcolor_list = qColorData(Dark);
+        dcolor_list = dColorData(Dark);
     } else {
         pa = new DPalette();
 
@@ -545,8 +470,8 @@ DPalette DGuiApplicationHelper::standardPalette(DGuiApplicationHelper::ColorType
         else
             light_palette = pa;
 
-        qcolor_list = light_qpalette;
-        dcolor_list = light_dpalette;
+        qcolor_list = qColorData(Light);
+        dcolor_list = dColorData(Light);
     }
 
     for (int i = 0; i < DPalette::NColorRoles; ++i) {
@@ -630,13 +555,13 @@ static void generatePaletteColor_helper(DPalette &base, M role, DGuiApplicationH
     QColor disable_mask_color, inactive_mask_color;
 
     if (type == DGuiApplicationHelper::DarkType) {
-        disable_mask_color = dark_qpalette[QPalette::Window];
-        inactive_mask_color = dark_qpalette[QPalette::Window];
+        disable_mask_color = qPaletteColor(dark, QPalette::Window);
+        inactive_mask_color = qPaletteColor(dark, QPalette::Window);
         disable_mask_color.setAlphaF(0.7);
         inactive_mask_color.setAlphaF(0.6);
     } else {
-        disable_mask_color = light_qpalette[QPalette::Window];
-        inactive_mask_color = light_qpalette[QPalette::Window];
+        disable_mask_color = qPaletteColor(light, QPalette::Window);
+        inactive_mask_color = qPaletteColor(light, QPalette::Window);
         disable_mask_color.setAlphaF(0.6);
         inactive_mask_color.setAlphaF(0.4);
     }
